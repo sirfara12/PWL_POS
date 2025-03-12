@@ -12,7 +12,7 @@ class UserController extends Controller
     // Menampilkan halaman daftar user
     public function index()
     {
-        $breadcrumb = (object) [
+        /*$breadcrumb = (object) [
             'title' => 'Daftar User',
             'list' => ['Home', 'User']
         ];
@@ -27,7 +27,28 @@ class UserController extends Controller
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu
+        ]);*/
+
+        $breadcrumb = (object) [
+            'title' => 'Daftar User',
+            'list'  => ['Home', 'User']
+        ];
+        
+        $page = (object) [
+            'title' => 'Daftar user yang terdaftar dalam sistem'
+        ];
+        
+        $activeMenu = 'user'; // set menu yang sedang aktif
+        
+        $level = LevelModel::all(); // ambil data level untuk filter level
+        
+        return view('user.index', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'level' => $level,
+            'activeMenu' => $activeMenu
         ]);
+        
     }
 
     // Ambil data user dalam bentuk JSON untuk DataTables
@@ -35,6 +56,11 @@ class UserController extends Controller
     {
         $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
             ->with('level');
+
+            //filter data user berdasarkan level_id
+            if ($request->level_id){
+                $users->where('level_id', $request->level_id);
+            }
 
         return DataTables::of($users)
             // Menambahkan kolom index / nomor urut
