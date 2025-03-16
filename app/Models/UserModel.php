@@ -9,13 +9,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class UserModel extends Model
 {
     use HasFactory;
+    protected $table ='m_user';
+    protected $primaryKey ='user_id';
 
-    protected $table = 'm_user';    //mendefinisikan nama tabel yang digunakan oleh model ini
-    protected $primaryKey ='user_id';//mendefinisikan primary key dari tabel yang digunakan
+    protected $fillable =['level_id', 'username', 'nama', 'password'];
 
-    protected $fillable = ['level_id', 'username', 'nama','password'];
-
-    public function level(): BelongsTo{
+    public function level(): BelongsTo
+    {
         return $this->belongsTo(LevelModel::class, 'level_id', 'level_id');
     }
 }
