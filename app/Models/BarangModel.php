@@ -24,4 +24,4 @@
      public function kategori():BelongsTo
      {
          return $this->belongsTo(KategoriModel::class, 'kategori_id', 'kategori_id');}
-}
+} 

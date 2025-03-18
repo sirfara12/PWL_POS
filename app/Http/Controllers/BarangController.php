@@ -29,7 +29,7 @@
  
      public function list(Request $request)
      {
-         $barang = BarangModel::select('barang_id', 'barang_kode', 'barang_nama', 'kategori_id')->with('kategori');
+         $barang = BarangModel::select('barang_id', 'barang_kode', 'barang_nama', 'kategori_id', 'harga_jual', 'harga_beli')->with('kategori');
  
          if ($request->kategori_id) {
              $barang->where('kategori_id', $request->kategori_id);
@@ -68,19 +68,25 @@
      }
  
      public function store(Request $request)
-     {
-         $request->validate([
-             'kategori_id' => 'required',
-             'barang_kode' => 'required|unique:m_barang',
-             'barang_nama' => 'required',
-             'harga_beli' => 'required',
-             'harga_jual' => 'required',
-         ]);
- 
-         BarangModel::create($request->all());
- 
-         return redirect('/barang')->with('success', 'Data berhasil ditambahkan');
-     }
+    {
+        $request->validate([
+            'kategori_id'  => 'required|integer|exists:m_kategori,kategori_id',
+            'barang_kode'  => 'required|string|max:10|unique:m_barang,barang_kode',
+            'barang_nama'  => 'required|string|max:100',
+            'harga_beli'   => 'required|integer|min:0',
+            'harga_jual'   => 'required|integer|min:0',
+        ]);
+
+        BarangModel::create([
+            'kategori_id' => $request->kategori_id,
+            'barang_kode' => $request->barang_kode,
+            'barang_nama' => $request->barang_nama,
+            'harga_beli'  => $request->harga_beli,
+            'harga_jual'  => $request->harga_jual,
+        ]);
+
+        return redirect('/barang')->with('success', 'Data barang berhasil disimpan!');
+    }
  
      public function show($id)
      {
@@ -149,4 +155,4 @@
              return redirect('/user')->with('error', 'Data user gagal dihapus karena masih terdapat tabel lain yang terkait dengan data ini');
          }
      }
- }
+ } 

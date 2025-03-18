@@ -1,85 +1,87 @@
 @extends('layouts.template')
 
-@section('title', 'Tambah Supplier')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
-            <h3 class="card-title">Tambah Supplier Baru</h3>
+            <h3 class="card-title">Tambah Barang</h3>
+            <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            <form method="POST" action="{{ route('suppliers.store') }}" class="form-horizontal">
+            <form method="POST" action="{{ url('barang') }}" class="form-horizontal">
                 @csrf
 
-                <!-- Nama Supplier -->
                 <div class="form-group row">
-                    <label class="col-md-2 control-label col-form-label">Nama Supplier</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" id="nama" name="nama"
-                               value="{{ old('nama') }}" required>
-                        @error('nama')
+                    <label class="col-2 control-label col-form-label">Kode Barang</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="barang_kode" name="barang_kode"
+                            value="{{ old('barang_kode') }}" required>
+                        @error('barang_kode')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Alamat Supplier -->
                 <div class="form-group row">
-                    <label class="col-md-2 control-label col-form-label">Alamat</label>
-                    <div class="col-md-10">
-                        <textarea class="form-control" id="alamat" name="alamat" rows="3" required>{{ old('alamat') }}</textarea>
-                        @error('alamat')
+                    <label class="col-2 control-label col-form-label">Nama Barang</label>
+                    <div class="col-10">
+                        <input type="text" class="form-control" id="barang_nama" name="barang_nama"
+                            value="{{ old('barang_nama') }}" required>
+                        @error('barang_nama')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Telepon Supplier -->
                 <div class="form-group row">
-                    <label class="col-md-2 control-label col-form-label">Telepon</label>
-                    <div class="col-md-10">
-                        <input type="text" class="form-control" id="telepon" name="telepon"
-                               value="{{ old('telepon') }}" required>
-                        @error('telepon')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Email Supplier -->
-                <div class="form-group row">
-                    <label class="col-md-2 control-label col-form-label">Email</label>
-                    <div class="col-md-10">
-                        <input type="email" class="form-control" id="email" name="email"
-                               value="{{ old('email') }}">
-                        @error('email')
-                            <small class="form-text text-danger">{{ $message }}</small>
-                        @enderror
-                    </div>
-                </div>
-
-                <!-- Status Supplier -->
-                <div class="form-group row">
-                    <label class="col-md-2 control-label col-form-label">Status</label>
-                    <div class="col-md-10">
-                        <select class="form-control" id="status" name="status" required>
-                            <option value="1" {{ old('status') == '1' ? 'selected' : '' }}>Aktif</option>
-                            <option value="0" {{ old('status') == '0' ? 'selected' : '' }}>Tidak Aktif</option>
+                    <label class="col-2 control-label col-form-label">Kategori</label>
+                    <div class="col-10">
+                        <select class="form-control" id="kategori_id" name="kategori_id" required>
+                            <option value="">- Pilih Kategori -</option>
+                            @foreach($kategori as $item)
+                                <option value="{{ $item->kategori_id }}">{{ $item->kategori_nama }}</option>
+                            @endforeach
                         </select>
-                        @error('status')
+                        @error('kategori_id')
                             <small class="form-text text-danger">{{ $message }}</small>
                         @enderror
                     </div>
                 </div>
 
-                <!-- Tombol Submit -->
                 <div class="form-group row">
-                    <div class="col-md-10 offset-md-2">
+                    <label class="col-2 control-label col-form-label">Harga Beli</label>
+                    <div class="col-10">
+                        <input type="number" class="form-control" id="harga_beli" name="harga_beli"
+                            value="{{ old('harga_beli') }}" required>
+                        @error('harga_beli')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-2 control-label col-form-label">Harga Jual</label>
+                    <div class="col-10">
+                        <input type="number" class="form-control" id="harga_jual" name="harga_jual"
+                            value="{{ old('harga_jual') }}" required>
+                        @error('harga_jual')
+                            <small class="form-text text-danger">{{ $message }}</small>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-10 offset-2">
                         <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                        <a class="btn btn-sm btn-default ml-1" href="{{ route('suppliers.index') }}">Kembali</a>
+                        <a class="btn btn-sm btn-default ml-1" href="{{ url('barang') }}">Kembali</a>
                     </div>
                 </div>
             </form>
         </div>
     </div>
 @endsection
+
+@push('css')
+@endpush
+
+@push('js')
+@endpush

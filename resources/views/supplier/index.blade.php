@@ -17,7 +17,7 @@
              @endif
              <table class="table table-bordered table-striped table-hover table-sm" id="table_supplier">
                  <thead>
-                     <tr><th>ID</th><th>Kode</th><th>Nama</th><th>Aksi</th></tr>
+                     <tr><th>ID</th><th>Kode</th><th>Nama</th><th>Alamat<th>Aksi</th></tr>
                  </thead>
              </table>
          </div>
@@ -55,6 +55,12 @@
                          className: "",
                          orderable: true,
                          searchable: true
+                     },
+                     {
+                            data: "supplier_alamat",
+                            className: "",
+                            orderable: true,
+                            searchable: true
                      },
                      {
                          data: "aksi",
