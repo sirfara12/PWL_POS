@@ -1,4 +1,3 @@
-
 @extends('layouts.template')
 
 @section('content')
@@ -8,7 +7,7 @@
             <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            @if(empty($supplier))
+            @if(empty($level))
                 <div class="alert alert-danger alert-dismissible">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
                     Data yang Anda cari tidak ditemukan.
@@ -17,19 +16,19 @@
                 <table class="table table-bordered table-striped table-hover table-sm">
                     <tr>
                         <th>ID</th>
-                        <td>{{ $supplier->supplier_id }}</td>
+                        <td>{{ $level->level_id }}</td>
                     </tr>
                     <tr>
-                        <th>Nama</th>
-                        <td>{{ $supplier->supplier_nama }}</td>
+                        <th>Kode Level</th>
+                        <td>{{ $level->level_kode }}</td>
                     </tr>
                     <tr>
-                        <th>Kode</th>
-                        <td>{{ $supplier->supplier_kode }}</td>
+                        <th>Nama Level</th>
+                        <td>{{ $level->level_nama }}</td>
                     </tr>
                 </table>
             @endif
-            <a href="{{ url('supplier') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
+            <a href="{{ url('level') }}" class="btn btn-sm btn-default mt-2">Kembali</a>
         </div>
     </div>
 @endsection

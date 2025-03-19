@@ -276,6 +276,12 @@ class UserController extends Controller
 
         return view('user.confirm_ajax', ['user' => $user]);
     }
+    public function show_ajax(string $id)
+    {
+        $user = UserModel::find($id);
+
+        return view('user.show_ajax', ['user' => $user]);
+    }
 
     public function delete_ajax(Request $request, $id)
     {

@@ -1,4 +1,4 @@
-@empty($user)
+@empty($supplier)
     <div id="modal-crud" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -12,49 +12,38 @@
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
                     Data yang anda cari tidak ditemukan
                 </div>
-                <a href="{{ url('/user') }}" class="btn btn-warning">Kembali</a>
+                <a href="{{ url('/supplier') }}" class="btn btn-warning">Kembali</a>
             </div>
         </div>
     </div>
 @else
-    <form action="{{ url('/user/' . $user->user_id . '/update_ajax') }}" method="POST" id="form-edit">
+    <form action="{{ url('/supplier/' . $supplier->supplier_id . '/update_ajax') }}" method="POST" id="form-edit">
         @csrf
         @method('PUT')
         <div class="modal-header">
-            <h5 class="modal-title">Edit Data User</h5>
+            <h5 class="modal-title">Edit Data Supplier</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
             <div class="form-group">
-                <label>Level Pengguna</label>
-                <select name="level_id" id="level_id" class="form-control" required>
-                    <option value="">- Pilih Level -</option>
-                    @foreach($level as $l)
-                        <option {{ ($l->level_id == $user->level_id) ? 'selected' : '' }} value="{{ $l->level_id }}">
-                            {{ $l->level_nama }}
-                        </option>
-                    @endforeach
-                </select>
-                <small id="error-level_id" class="error-text form-text text-danger"></small>
-            </div>
-            <div class="form-group">
-                <label>Username</label>
-                <input value="{{ $user->username }}" type="text" name="username" id="username" class="form-control"
-                    required>
-                <small id="error-username" class="error-text form-text text-danger"></small>
-            </div>
-            <div class="form-group">
-                <label>Nama</label>
-                <input value="{{ $user->nama }}" type="text" name="nama" id="nama" class="form-control" required>
+                <label>Nama Supplier</label>
+                <input type="text" name="supplier_nama" id="supplier_nama" class="form-control"
+                    value="{{$supplier->supplier_nama}}" required>
                 <small id="error-nama" class="error-text form-text text-danger"></small>
             </div>
             <div class="form-group">
-                <label>Password</label>
-                <input value="" type="password" name="password" id="password" class="form-control">
-                <small class="form-text text-muted">Abaikan jika tidak ingin ubah password</small>
-                <small id="error-password" class="error-text form-text text-danger"></small>
+                <label>Alamat Supplier</label>
+                <input type="text" name="supplier_alamat" id="supplier_alamat" class="form-control"
+                    value="{{$supplier->supplier_alamat}}" required>
+                <small id="error-alamat" class="error-text form-text text-danger"></small>
+            </div>
+            <div class="form-group">
+                <label>Kode Supplier</label>
+                <input type="text" name="supplier_kode" id="supplier_kode" class="form-control"
+                    value="{{$supplier->supplier_kode}}" required>
+                <small id="error-kode" class="error-text form-text text-danger"></small>
             </div>
         </div>
         <div class="modal-footer">
@@ -67,10 +56,9 @@
         $(document).ready(function () {
             $("#form-edit").validate({
                 rules: {
-                    level_id: { required: true, number: true },
-                    username: { required: true, minlength: 3, maxlength: 20 },
-                    nama: { required: true, minlength: 3, maxlength: 100 },
-                    password: { minlength: 6, maxlength: 20 }
+                    supplier_nama: { required: true, minlength: 3, maxlength: 100 },
+                    supplier_alamat: { required: true, minlength: 5, maxlength: 100 },
+                    supplier_kode: { required: true, maxlength: 10 }
                 },
                 submitHandler: function (form) {
                     $.ajax({
@@ -81,7 +69,7 @@
                             if (response.status) {
                                 $('#modal-crud').modal('hide');
                                 Swal.fire({ icon: 'success', title: 'Berhasil', text: response.message });
-                                dataUser.ajax.reload();
+                                dataSupplier.ajax.reload();
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function (prefix, val) {

@@ -1,13 +1,14 @@
-@extends('layouts.template')
+@extends('layouts.template') 
 
 @section('content')
+
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools"></div>
         </div>
         <div class="card-body">
-            @empty($level)
+            @if(empty($level))
                 <div class="alert alert-danger alert-dismissible">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!</h5>
                     Data yang Anda cari tidak ditemukan.
@@ -16,9 +17,10 @@
             @else
                 <form method="POST" action="{{ url('/level/' . $level->level_id) }}" class="form-horizontal">
                     @csrf
-                    {!! method_field('PUT') !!}
+                    {{-- Gunakan @method('PUT') untuk update --}}
+                    @method('PUT') 
                     <div class="form-group row">
-                        <label class="col-1 control-label col-form-label">Level Kode</label>
+                        <label class="col-1 control-label col-form-label">Kode Level</label>
                         <div class="col-11">
                             <input type="text" class="form-control" id="level_kode" name="level_kode"
                                 value="{{ old('level_kode', $level->level_kode) }}" required>
@@ -27,6 +29,7 @@
                             @enderror
                         </div>
                     </div>
+
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Nama Level</label>
                         <div class="col-11">
@@ -37,19 +40,23 @@
                             @enderror
                         </div>
                     </div>
+
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label"></label>
                         <div class="col-11">
                             <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
-                            <a class="btn btn-sm btn-default ml-1" href="{{ url('level')}}">Kembali</a>
+                            <a class="btn btn-sm btn-default ml-1" href="{{ url('level') }}">Kembali</a>
                         </div>
                     </div>
                 </form>
-            @endempty
+            @endif
         </div>
     </div>
+
 @endsection
+
 @push('css')
 @endpush
+
 @push('js')
 @endpush

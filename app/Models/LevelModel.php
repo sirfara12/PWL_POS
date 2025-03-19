@@ -8,13 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class LevelModel extends Model
 {
     use HasFactory;
+    protected $table = 'm_level';
+    protected $primaryKey = 'level_id';
 
-    protected $table = 'm_level'; // Nama tabel di database
-    protected $primaryKey = 'level_id'; // Ubah primary key ke 'level_id'
-    public $timestamps = false; // Jika tabel tidak memiliki created_at dan updated_at
-
-    protected $fillable = [
-        'level_kode',
-        'level_nama'
-    ];
+    protected $fillable = ['level_nama', 'level_kode'];
 }
