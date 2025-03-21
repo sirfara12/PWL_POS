@@ -106,22 +106,27 @@ class UserController extends Controller
 
     // Menampilkan detail user
     public function show(string $id)
-    {
-        $user = UserModel::with('level')->find($id);
+{
+    $user = UserModel::with('level')->find($id);
 
-        $breadcrumb = (object) [
-            'title' => 'Detail User',
-            'list' => ['Home', 'User', 'Detail']
-        ];
-
-        $page = (object) [
-            'title' => 'Detail user'
-        ];
-
-        $activeMenu = 'user'; // set menu yang sedang aktif
-
-        return view('user.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'user' => $user, 'activeMenu' => $activeMenu]);
+    if (!$user) {
+        return redirect('/user')->with('error', 'User tidak ditemukan');
     }
+
+    $breadcrumb = (object) [
+        'title' => 'Detail User',
+        'list' => ['Home', 'User', 'Detail']
+    ];
+
+    $page = (object) [
+        'title' => 'Detail user'
+    ];
+
+    $activeMenu = 'user';
+
+    return view('user.show', compact('breadcrumb', 'page', 'user', 'activeMenu'));
+}
+
 
     // Menampilkan halaman form edit user
     public function edit(string $id)
