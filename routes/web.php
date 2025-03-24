@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KategoriController;
@@ -22,6 +23,11 @@ use Monolog\Level;
 | be assigned to the "web" middleware group. Make something great!
 | blab;abalsdansldas
 */
+
+Route::pattern('id', '[0-9]+');
+Route::get('login', [AuthController::class, 'login'])->name('login');
+Route::post('login', [AuthController::class, 'postlogin']);
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::get('/', [WelcomeController::class, 'index']);
 
