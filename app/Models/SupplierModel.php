@@ -13,5 +13,6 @@
      protected $fillable = [
          'supplier_kode',
          'supplier_nama',
+         'alamat',
          'supplier_alamat'];
 }

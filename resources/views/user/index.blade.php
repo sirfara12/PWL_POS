@@ -1,29 +1,21 @@
 @extends('layouts.template')
-
 @section('content')
     <div class="card card-outline card-primary">
         <div class="card-header">
             <h3 class="card-title">{{ $page->title }}</h3>
             <div class="card-tools">
-                <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
-                <button onclick="modalAction('{{ url('/user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">
-                    Tambah Ajax
-                </button>
+                    <button onclick="modalAction('{{ url('/user/import') }}')" class="btn btn-info">Import User</button>
+                    <a class="btn btn-sm btn-primary mt-1" href="{{ url('user/create') }}">Tambah</a>
+                    <button onclick="modalAction('{{ url('user/create_ajax') }}')" class="btn btn-sm btn-success mt-1">Tambah Ajax</button>
             </div>
         </div>
         <div class="card-body">
-            @if (session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if (session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group row">
                         <label class="col-1 control-label col-form-label">Filter:</label>
                         <div class="col-3">
-                            <select class="form-control" id="level_id" name="level_id" required>
+                            <select class="form-control" id="level_id" name="level_id">
                                 <option value="">- Semua -</option>
                                 @foreach($level as $item)
                                     <option value="{{ $item->level_id }}">{{ $item->level_nama }}</option>
@@ -34,7 +26,12 @@
                     </div>
                 </div>
             </div>
-
+            @if (session('success'))
+                <div class="alert alert-success">{{ session('success') }}</div>
+            @endif
+            @if (session('error'))
+                <div class="alert alert-danger">{{ session('error') }}</div>
+            @endif
             <table class="table table-bordered table-striped table-hover table-sm" id="table_user">
                 <thead>
                     <tr>
@@ -48,45 +45,26 @@
             </table>
         </div>
     </div>
-    {{-- Modal Container --}}
-    <div id="modal-crud" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
-        data-keyboard="false" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content"></div>
-        </div>
-    </div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
-
-@push('css')
-@endpush
 
 @push('js')
     <script>
-        function modalAction(url) {
-            // Kosongkan modal sebelum memuat konten baru
-            $("#modal-crud .modal-content").html("");
-
-            // Panggil modal melalui AJAX
-            $.get(url, function (response) {
-                $("#modal-crud .modal-content").html(response);
-                $("#modal-crud").modal("show");
+        function modalAction(url = '') {
+            $('#myModal').load(url, function() {
+                $('#myModal').modal('show');
             });
         }
 
-        // Bersihkan isi modal setelah ditutup
-        $('#modal-crud').on('hidden.bs.modal', function () {
-            $("#modal-crud .modal-content").html("");
-        });
-
-        var dataUSer;
+        var dataUser;
         $(document).ready(function () {
-                dataUser = $('#table_user').DataTable({
+            dataUser = $('#table_user').DataTable({
                 serverSide: true,
                 ajax: {
                     url: "{{ url('user/list') }}",
                     dataType: "json",
-                    type: "POST",
-                    data: function (d) {
+                    type: "GET",
+                    data: function(d) {
                         d.level_id = $('#level_id').val();
                     }
                 },
@@ -98,7 +76,8 @@
                     { data: "aksi", className: "", orderable: false, searchable: false }
                 ]
             });
-            $('#level_id').on('change', function () {
+
+            $('#level_id').on('change', function() {
                 dataUser.ajax.reload();
             });
         });
