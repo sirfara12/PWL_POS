@@ -128,7 +128,7 @@ Route::get('/{id}/edit_ajax', [SupplierController::class, 'edit_ajax']);
 Route::put('/{id}/update_ajax', [SupplierController::class, 'update_ajax']);
 Route::get('/{id}/delete_ajax', [SupplierController::class, 'confirm_ajax']);
 Route::delete('/{id}/delete_ajax', [SupplierController::class, 'delete_ajax']);
-Route::get('/import', [SupplierController::class, 'import']);
+Route::get('/supplier/import', [SupplierController::class, 'import']);
 Route::post('/import_ajax', [SupplierController::class, 'import_ajax']);
 Route::delete('/{id}', [SupplierController::class, 'destroy']);
 });
