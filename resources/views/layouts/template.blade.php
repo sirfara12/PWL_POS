@@ -81,7 +81,8 @@
      </div>
      <div class="modal-footer">
        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-       <a href="{{ url('/logout') }}" class="btn btn-danger logout-btn">Ya, Keluar</a>
+       <a href="#" class="btn btn-danger logout-btn" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Ya, Keluar</a>
+
        <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
          @csrf
        </form>

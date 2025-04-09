@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SupplierModel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -40,19 +41,11 @@ class SupplierController extends Controller
         }
 
         return DataTables::of($suppliers)
-            ->addIndexColumn()->addColumn('aksi', function ($supplier) {
-                //$btn = '<a href="' . url('/supplier/' . $supplier->supplier_id) . '" class="btn btn-info btn-sm">Detail</a> ';
-                //$btn .= '<a href="' . url('/supplier/' . $supplier->supplier_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
-                //$btn .= '<form class="d-inline-block" method="POST" action="' .
-                //    url('/supplier/' . $supplier->supplier_id) . '">' . csrf_field() . method_field('DELETE') .
-                //    '<button type="submit" class="btn btn-danger btn-sm" 
-                //    onclick="return confirm(\'Apakah Anda yakit menghapus data ini?\');">Hapus</button></form>';
-                $btn = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
-                    '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
-                    '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id .
-                    '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+            ->addIndexColumn()
+            ->addColumn('aksi', function ($supplier) {
+                $btn = '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/detail_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                $btn .= '<button onclick="modalAction(\'' . url('/supplier/' . $supplier->supplier_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button>';
                 return $btn;
             })->rawColumns(['aksi'])
             ->make(true);
@@ -305,59 +298,84 @@ class SupplierController extends Controller
         return view('supplier.import'); 
     } 
     public function import_ajax(Request $request) 
-    { 
-        if($request->ajax() || $request->wantsJson()){ 
-            $rules = [ 
-                // validasi file harus xls atau xlsx, max 1MB 
-                'file_supplier' => ['required', 'mimes:xlsx', 'max:1024'] 
-            ]; 
-            $validator = Validator::make($request->all(), $rules); 
-            if($validator->fails()){ 
-                return response()->json([ 
-                    'status' => false, 
-                    'message' => 'Validasi Gagal', 
-                    'msgField' => $validator->errors() 
-                ]); 
-            }
-            $file = $request->file('file_supplier');  // ambil file dari request 
+{ 
+    if($request->ajax() || $request->wantsJson()){ 
+        $rules = [ 
+            'file_supplier' => ['required', 'mimes:xlsx', 'max:1024'] 
+        ]; 
+        $validator = Validator::make($request->all(), $rules); 
+        if($validator->fails()){ 
+            return response()->json([ 
+                'status' => false, 
+                'message' => 'Validasi Gagal', 
+                'msgField' => $validator->errors() 
+            ]); 
+        }
 
-            $reader = IOFactory::createReader('Xlsx');  // load reader file excel 
-            $reader->setReadDataOnly(true);             // hanya membaca data 
-            $spreadsheet = $reader->load($file->getRealPath()); // load file excel 
-            $sheet = $spreadsheet->getActiveSheet();    // ambil sheet yang aktif 
-
-            $data = $sheet->toArray(null, false, true, true);   // ambil data excel 
+        try {
+            $file = $request->file('file_supplier');  
+            $reader = IOFactory::createReader('Xlsx');  
+            $reader->setReadDataOnly(true);             
+            $spreadsheet = $reader->load($file->getRealPath()); 
+            $sheet = $spreadsheet->getActiveSheet();    
+            $data = $sheet->toArray(null, false, true, true);   
 
             $insert = []; 
-            if(count($data) > 1){ // jika data lebih dari 1 baris 
+            if(count($data) > 1){ 
                 foreach ($data as $baris => $value) { 
-                    if($baris > 1){ // baris ke 1 adalah header, maka lewati 
+                    if($baris > 1){ // skip header baris pertama
+
+                        // Lewati jika semua kolom kosong
+                        if (empty($value['A']) && empty($value['B']) && empty($value['C']) && empty($value['D'])) {
+                            continue;
+                        }
+
+                        // Validasi minimal kolom C (nama supplier) tidak boleh kosong
+                        if (empty($value['C'])) {
+                            return response()->json([
+                                'status' => false,
+                                'message' => "Baris ke-$baris: Nama supplier tidak boleh kosong"
+                            ]);
+                        }
+
                         $insert[] = [ 
-                            'supplier_id' => $value['A'], 
-                            'supplier_kode' => $value['B'], 
-                            'supplier_nama' => $value['C'], 
+                            'supplier_id'     => $value['A'], 
+                            'supplier_kode'   => $value['B'], 
+                            'supplier_nama'   => $value['C'], 
                             'supplier_alamat' => $value['D'], 
-                            'created_at' => now(), 
+                            'created_at'      => now(), 
                         ]; 
                     } 
                 } 
                 if(count($insert) > 0){ 
-                    // insert data ke database, jika data sudah ada, maka diabaikan 
                     SupplierModel::insertOrIgnore($insert);    
-                } 
-                return response()->json([ 
-                    'status' => true, 
-                    'message' => 'Data berhasil diimport' 
-                ]); 
-            }else{ 
+                    return response()->json([ 
+                        'status' => true, 
+                        'message' => 'Data berhasil diimport' 
+                    ]); 
+                } else {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Semua baris kosong atau tidak valid'
+                    ]);
+                }
+            } else { 
                 return response()->json([ 
                     'status' => false, 
                     'message' => 'Tidak ada data yang diimport' 
                 ]); 
-            } 
-        } 
-        return redirect('/'); 
-    }
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat membaca file: '.$e->getMessage()
+            ]);
+        }
+    } 
+
+    return redirect('/'); 
+}
+
     public function export_excel(Request $request)
     {
         // Ambil data barang dengan filter kategori jika ada
@@ -403,4 +421,21 @@ class SupplierController extends Controller
         $writer->save('php://output');
         exit;
     }
+    public function export_pdf()
+{
+    $supplier = SupplierModel::select(
+            'supplier_nama as nama',
+            'supplier_kode as kode',
+            'supplier_alamat as alamat'
+        )
+        ->orderBy('supplier_id')
+        ->get();
+
+    $pdf = Pdf::loadView('supplier.export_pdf', ['supplier' => $supplier]);
+    $pdf->setPaper('a4', 'portrait');
+    $pdf->setOption(['isRemoteEnabled' => true]);
+    
+    return $pdf->stream('Data Supplier - ' . date('Y-m-d H:i:s') . '.pdf');
+}
+
 }

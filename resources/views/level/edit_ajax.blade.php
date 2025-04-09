@@ -62,7 +62,7 @@
                             if (response.status) {
                                 $('#modal-crud').modal('hide');
                                 Swal.fire({ icon: 'success', title: 'Berhasil', text: response.message });
-                                dataLevel.ajax.reload();
+                                dataTableLevel.ajax.reload();
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function (prefix, val) {

@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class UserController extends Controller
 { 
@@ -366,52 +367,75 @@ class UserController extends Controller
         } 
         return redirect('/'); 
     } 
-    public function export_excel(Request $request)
+
+    public function export_excel()
     {
-        // Ambil data barang dengan filter kategori jika ada
-        $user = UserModel::select('user_id', 'level_id', 'username', 'nama', 'password')
+        // Ambil data user beserta level-nya (with sebelum get)
+        $users = UserModel::with('level')
+            ->select('level_id', 'username', 'nama')
             ->orderBy('level_id')
-            ->with('level')
             ->get();
 
-
-        //load library excel
         $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet(); //ambil sheet yang aktif
+        $sheet = $spreadsheet->getActiveSheet();
 
-        $sheet->setCellValue('A1', 'ID');
+        // Header kolom
+        $sheet->setCellValue('A1', 'No');
         $sheet->setCellValue('B1', 'Username');
         $sheet->setCellValue('C1', 'Nama');
-        $sheet->setCellValue('D1', 'Level Pengguna');
+        $sheet->setCellValue('D1', 'Level');
+
+        // Bold header
         $sheet->getStyle('A1:D1')->getFont()->setBold(true);
 
         $no = 1;
         $baris = 2;
-        foreach ($user as $value) {
-            $sheet->setCellValue('A'.$baris, $value->user_id);
-            $sheet->setCellValue('B'.$baris, $value->username);
-            $sheet->setCellValue('C'.$baris, $value->nama);
-            $sheet->setCellValue('D'.$baris, $value->level->level_nama);
+        foreach ($users as $value) {
+            $sheet->setCellValue('A' . $baris, $no);
+            $sheet->setCellValue('B' . $baris, $value->username);
+            $sheet->setCellValue('C' . $baris, $value->nama);
+            $sheet->setCellValue('D' . $baris, $value->level->level_nama ?? '-');
+
             $baris++;
             $no++;
         }
 
-        foreach (range('A', 'D') as $columnID) {
-            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        // Auto size untuk semua kolom
+        foreach (range('A', 'D') as $kolom) {
+            $sheet->getColumnDimension($kolom)->setAutoSize(true);
         }
 
         $sheet->setTitle('Data User');
-        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
-        $filename = 'Data_User_'.date('Y-m-d_His').'.xlsx';
 
+        $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $filename = 'Data User - ' . date('Y-m-d H-i-s') . '.xlsx';
+
+        // Header file untuk download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$filename.'"');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
         header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-        header('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT');
+        header('Cache-Control: cache, must-revalidate');
         header('Pragma: public');
 
         $writer->save('php://output');
         exit;
+    }
+
+    public function export_pdf()
+    {
+        $user = UserModel::select('level_id', 'username', 'nama')
+            ->orderBy('level_id')
+            ->orderBy('username')
+            ->with('level')
+            ->get();
+
+        // use Barryvdh\DomPDF\Facade\Pdf;
+        $pdf = Pdf::loadView('user.export_pdf', ['user' => $user]);
+        $pdf->setPaper('a4', 'portrait'); // set ukuran kertas dan orientasi
+        $pdf->setOption(['isRemoteEnabled' => true]); // set true jika ada gambar dari url
+        $pdf->render();
+        return $pdf->stream('Data User - ' . date('Y-m-d H:i:s') . '.pdf');
     }
 }
