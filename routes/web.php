@@ -12,10 +12,11 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 
+
 Route::pattern('id', '[0-9]+');
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('login', [AuthController::class, 'postlogin']);
-Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
+Route::post('logout', [AuthController::class, 'logout'])->middleware('auth');
 Route::get('/register', [RegisterController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'store']);
 

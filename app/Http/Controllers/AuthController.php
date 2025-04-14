@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use App\Models\User;
 
 class AuthController extends Controller
 {
@@ -40,5 +40,14 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('login');
+    }
+
+     public function register(Request $request) {
+        return response()->json([
+            'status' => true,
+            'message' => 'Registrasi berhasil',
+        ]);
+        User::create($request->all());
+        return response()->json(['status' => true, 'message' => 'Registrasi Berhasil!', 'redirect' => url('/dashboard')]);
     }
 }
