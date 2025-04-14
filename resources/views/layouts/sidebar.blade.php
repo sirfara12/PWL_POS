@@ -45,14 +45,13 @@
                     <p>Data Barang</p>
                 </a>
             </li>
-            <li class="nav-header">Data Supplier</li> 
+            <li class="nav-header">Data Supplier</li>
             <li class="nav-item">
-                <a href="{{ url('/supplier') }}" class="nav-link {{ ($activeMenu == 'supplier') ? 'active' : '' }}"> 
+                <a href="{{ url('/supplier') }}" class="nav-link {{ ($activeMenu == 'supplier') ? 'active' : '' }}">
                     <i class="nav-icon fas fa-truck"></i>
-                    <p>Supplier Barang</p> 
+                    <p>Supplier Barang</p>
                 </a>
             </li>
-
             <li class="nav-header">Data Transaksi</li>
             <li class="nav-item">
                 <a href="{{ url('/stok') }}" class="nav-link {{ ($activeMenu == 'stok') ? 'active' : '' }}">
@@ -66,13 +65,15 @@
                     <p>Transaksi Penjualan</p>
                 </a>
             </li>
-            <!-- Tambahkan Menu Logout -->
-            <li class="nav-header">Logout</li>
-            <a href="#" class="nav-link text-danger" data-toggle="modal" data-target="#logoutModal">
-                <i class="nav-icon fas fa-sign-out-alt"></i>
-                <p>Logout</p>
-            </a>
-        </li>
+            <li class="nav-item">
+                <a href="{{ url('logout') }}" class="nav-link text-danger"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <p>Logout</p>
+                </a>
+            </li>
+            <form id="logout-form" action="{{ url('logout ') }}" method="GET" style="display: none;">
+            </form>            
         </ul>
     </nav>
 </div>

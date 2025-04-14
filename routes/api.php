@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\LoginController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RegisterController;
@@ -17,13 +18,7 @@ use App\Http\Controllers\Api\RegisterController;
 */
 
 Route::post('/register', [RegisterController::class, 'post'])->name('register');
-// Route::post('/register', function(){
-//     return response()->json([
-//         'status' => true,
-//         'message' => 'Registrasi berhasil',
-//     ]);
-//     return response()->json(['status' => true, 'message' => 'Registrasi Berhasil!', 'redirect' => url('/dashboard')]);
-// })->name('register');
+Route::post('/login', [LoginController::class, 'post'])->name('login');
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
