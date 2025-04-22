@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\KategoriModel;
 use App\Models\LevelModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -18,9 +19,12 @@ class LevelController extends Controller
             'title' => 'Data Level',
             'list' => ['Home', 'Level']
         ];
+        $kategori = KategoriModel::all(); // Ambil kategori
+
         return view('level.index', [
             'activeMenu' => $activeMenu,
-            'breadcrumb' => $breadcrumb
+            'breadcrumb' => $breadcrumb,
+            'kategori' => $kategori
         ]);
     }
 
@@ -43,6 +47,13 @@ class LevelController extends Controller
     {
         return view('level.create_ajax');
     }
+
+    public function show_ajax($id)
+    {
+        $level = LevelModel::find($id);
+        return view('level.show_ajax', compact('level')); // pastikan ini benar
+    }
+    
 
     public function store_ajax(Request $request)
     {

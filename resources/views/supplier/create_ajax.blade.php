@@ -1,55 +1,57 @@
 <form action="{{ url('/supplier/ajax') }}" method="POST" id="form-tambah">
     @csrf
-    <div class="modal-dialog">
+    <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Tambah Data Supplier</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h5 class="modal-title" id="exampleModalLabel">Tambah Data Supplier</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
-                <form id="form-create-ajax" action="{{ url('/supplier/store_ajax') }}" method="POST">
-                    @csrf
-                    <div class="form-group">
-                        <label>Nama Supplier</label>
-                        <input type="text" name="nama" id="nama" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Alamat Supplier</label>
-                        <input type="text" name="alamat" id="alamat" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Telepon Supplier</label>
-                        <input type="text" name="telp" id="telp" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Supplier</label>
-                        <input type="text" name="email" id="email" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Status Supplier</label>
-                        <select class="form-control" id="status" name="status" required>
-                            <option value="">- Semua -</option>
-                            <option value="aktif">aktif</option>
-                            <option value="nonaktif">nonaktif</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan</button>
-                    </div>
-                </form>
+                <div class="form-group">
+                    <label>Kode</label>
+                    <input value="" type="text" name="supplier_kode" id="supplier_kode" class="form-control"
+                        required>
+                    <small id="error-supplier_kode" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label>Nama</label>
+                    <input value="" type="text" name="supplier_nama" id="supplier_nama" class="form-control"
+                        required>
+                    <small id="error-supplier_nama" class="error-text form-text text-danger"></small>
+                </div>
+                <div class="form-group">
+                    <label>Alamat</label>
+                    <input value="" type="text" name="supplier_alamat" id="supplier_alamat"
+                        class="form-control" required>
+                    <small id="error-supplier_alamat" class="error-text form-text text-danger"></small>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-warning">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </div>
-    </div>    
+    </div>
+</form>
 <script>
     $(document).ready(function() {
         $("#form-tambah").validate({
             rules: {
-                nama: { required: true, minlength: 3, maxlength: 100 },
-                alamat: { required: true, minlength: 3, maxlength: 255 },
-                telp: { required: true, minlength: 5, maxlength: 15 },
-                email: { required: true, email: true, maxlength: 100 },
-                status: { required: true }
+                supplier_kode: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 10
+                },
+                supplier_nama: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100
+                },
+                supplier_alamat: {
+                    required: true,
+                    maxlength: 255
+                },
             },
             submitHandler: function(form) {
                 $.ajax({
@@ -58,13 +60,13 @@
                     data: $(form).serialize(),
                     success: function(response) {
                         if (response.status) {
-                            $('#tryModal').modal('hide');
+                            $('#myModal').modal('hide');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            dataTable.ajax.reload();
+                            dataSupplier.ajax.reload();
                         } else {
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {

@@ -26,20 +26,20 @@ class KategoriController extends Controller
     }
 
     public function list(Request $request)
-    {
-        $kategori = KategoriModel::select('kategori_id', 'kategori_kode', 'kategori_nama');
+{
+    $kategori = KategoriModel::select('kategori_id', 'kategori_kode', 'kategori_nama');
 
-        return DataTables::of($kategori)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($kategori) {
-                $btn = '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/detail_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button>';
-                return $btn;
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
-    }
+    return DataTables::of($kategori)
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($kategori) {
+            $btn  = '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/kategori/' . $kategori->kategori_id . '/delete_ajax') . '\')"  class="btn btn-danger btn-sm">Hapus</button> ';
+            return $btn;
+        })
+        ->rawColumns(['aksi'])
+        ->make(true);
+}
 
     public function create_ajax()
     {
@@ -52,7 +52,7 @@ class KategoriController extends Controller
             $rules = [
                 'kategori_kode' => ['required', 'string', 'max:20', 'unique:m_kategori,kategori_kode'],
                 'kategori_nama' => ['required', 'string', 'max:100', 'unique:m_kategori,kategori_nama']
-            ];            
+            ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 return response()->json([
@@ -70,6 +70,17 @@ class KategoriController extends Controller
         return redirect('/');
     }
 
+    public function show_ajax($id)
+    {
+        $kategori = KategoriModel::find($id);
+    
+        if (!$kategori) {
+            return view('kategori.show_ajax', compact('kategori'));
+        }
+    
+        return view('kategori.show_ajax', compact('kategori'));
+    }
+    
     public function edit_ajax($id)
     {
         $kategori = KategoriModel::find($id);
@@ -82,7 +93,7 @@ class KategoriController extends Controller
             $rules = [
                 'kategori_kode' => ['required', 'string', 'max:20', 'unique:m_kategori,kategori_kode,' . $id . ',kategori_id'],
                 'kategori_nama' => ['required', 'string', 'max:100', 'unique:m_kategori,kategori_nama,' . $id . ',kategori_id']
-            ];            
+            ];
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
                 return response()->json([
@@ -170,7 +181,7 @@ class KategoriController extends Controller
                             'kategori_kode' => $value['A'],
                             'kategori_nama' => $value['B'],
                             'created_at' => now(),
-                        ];                        
+                        ];
                     }
                 }
                 if (count($insert) > 0) {

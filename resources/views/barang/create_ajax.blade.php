@@ -1,43 +1,45 @@
 <form action="{{ url('/barang/ajax') }}" method="POST" id="form-tambah">
     @csrf
-
     <div id="modal-master" class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Tambah Data Barang</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
                     <label>Kategori Barang</label>
                     <select name="kategori_id" id="kategori_id" class="form-control" required>
-                        <option value="">- Pilih Kategori -</option>
-                        @foreach($kategori as $k)
+                        <option value="">- Pilih Level -</option>
+                        @foreach ($kategori as $k)
                             <option value="{{ $k->kategori_id }}">{{ $k->kategori_nama }}</option>
                         @endforeach
                     </select>
-                    <small id="error-kategori_id" class="error-text form-text text-danger"></small>
+                    <small id="error-level_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Kode Barang</label>
-                    <input value="" type="text" name="barang_kode" id="barang_kode" class="form-control" required>
+                    <label>Kode</label>
+                    <input value="" type="text" name="barang_kode" id="barang_kode" class="form-control"
+                        required>
                     <small id="error-barang_kode" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
-                    <label>Nama Barang</label>
-                    <input value="" type="text" name="barang_nama" id="barang_nama" class="form-control" required>
+                    <label>Nama</label>
+                    <input value="" type="text" name="barang_nama" id="barang_nama" class="form-control"
+                        required>
                     <small id="error-barang_nama" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Harga Beli</label>
-                    <input value="" type="number" name="harga_beli" id="harga_beli" class="form-control" required>
+                    <input value="" type="number" name="harga_beli" id="harga_beli" class="form-control"
+                        required>
                     <small id="error-harga_beli" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Harga Jual</label>
-                    <input value="" type="number" name="harga_jual" id="harga_jual" class="form-control" required>
+                    <input value="" type="number" name="harga_jual" id="harga_jual" class="form-control"
+                        required>
                     <small id="error-harga_jual" class="error-text form-text text-danger"></small>
                 </div>
             </div>
@@ -52,11 +54,28 @@
     $(document).ready(function() {
         $("#form-tambah").validate({
             rules: {
-                kategori_id: { required: true, number: true },
-                barang_kode: { required: true, maxlength: 10 },
-                barang_nama: { required: true, maxlength: 100 },
-                harga_beli: { required: true, number: true, min: 0 },
-                harga_jual: { required: true, number: true, min: 0 }
+                kategori_id: {
+                    required: true,
+                    number: true
+                },
+                barang_kode: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 10
+                },
+                barang_nama: {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 100
+                },
+                harga_beli: {
+                    required: true,
+                    number: true
+                },
+                harga_jual: {
+                    required: true,
+                    number: true
+                },
             },
             submitHandler: function(form) {
                 $.ajax({
@@ -65,14 +84,13 @@
                     data: $(form).serialize(),
                     success: function(response) {
                         if (response.status) {
-                            $('#modal-master').modal('hide');
+                            $('#myModal').modal('hide');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            $('#form-tambah')[0].reset(); // Reset form setelah berhasil
-                            dataTable.ajax.reload();
+                            dataBarang.ajax.reload();
                         } else {
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {
@@ -84,13 +102,6 @@
                                 text: response.message
                             });
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: 'Terjadi kesalahan pada server: ' + error
-                        });
                     }
                 });
                 return false;

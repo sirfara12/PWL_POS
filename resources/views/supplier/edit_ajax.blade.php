@@ -3,14 +3,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Kesalahan</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
             </div>
             <div class="modal-body">
                 <div class="alert alert-danger">
                     <h5><i class="icon fas fa-ban"></i> Kesalahan!!!</h5>
-                    Data yang Anda cari tidak ditemukan.
+                    Data yang anda cari tidak ditemukan
                 </div>
                 <a href="{{ url('/supplier') }}" class="btn btn-warning">Kembali</a>
             </div>
@@ -20,43 +19,31 @@
     <form action="{{ url('/supplier/' . $supplier->supplier_id . '/update_ajax') }}" method="POST" id="form-edit">
         @csrf
         @method('PUT')
-
         <div id="modal-master" class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="exampleModalLabel">Edit Data Supplier</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Nama Supplier</label>
-                        <input value="{{ $supplier->nama }}" type="text" name="nama" id="nama" class="form-control" required>
-                        <small id="error-nama" class="error-text form-text text-danger"></small>
+                        <label>Kode</label>
+                        <input value="{{ $supplier->supplier_kode }}" type="text" name="supplier_kode" id="supplier_kode"
+                            class="form-control" required>
+                        <small id="error-supplier_kode" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Alamat Supplier</label>
-                        <input value="{{ $supplier->alamat }}" type="text" name="alamat" id="alamat" class="form-control" required>
-                        <small id="error-alamat" class="error-text form-text text-danger"></small>
+                        <label>Nama</label>
+                        <input value="{{ $supplier->supplier_nama }}" type="text" name="supplier_nama" id="supplier_nama"
+                            class="form-control" required>
+                        <small id="error-supplier_nama" class="error-text form-text text-danger"></small>
                     </div>
                     <div class="form-group">
-                        <label>Telepon Supplier</label>
-                        <input value="{{ $supplier->telp }}" type="text" name="telp" id="telp" class="form-control" required>
-                        <small id="error-telp" class="error-text form-text text-danger"></small>
-                    </div>
-                    <div class="form-group">
-                        <label>Email Supplier</label>
-                        <input value="{{ $supplier->email }}" type="email" name="email" id="email" class="form-control" required>
-                        <small id="error-email" class="error-text form-text text-danger"></small>
-                    </div>
-                    <div class="form-group">
-                        <label>Status Supplier</label>
-                        <select class="form-control" id="status" name="status" required>
-                            <option value="aktif" {{ $supplier->status == 'aktif' ? 'selected' : '' }}>Aktif</option>
-                            <option value="nonaktif" {{ $supplier->status == 'nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                        </select>
-                        <small id="error-status" class="error-text form-text text-danger"></small>
+                        <label>Alamat</label>
+                        <input value="{{ $supplier->supplier_alamat }}" type="text" name="supplier_alamat"
+                            id="supplier_alamat" class="form-control" required>
+                        <small id="error-supplier_alamat" class="error-text form-text text-danger"></small>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -66,17 +53,24 @@
             </div>
         </div>
     </form>
-
-    <!-- Script Ajax -->
     <script>
         $(document).ready(function() {
             $("#form-edit").validate({
                 rules: {
-                    nama: { required: true, minlength: 3, maxlength: 100 },
-                    alamat: { required: true, minlength: 3, maxlength: 255 },
-                    telp: { required: true, minlength: 5, maxlength: 15 },
-                    email: { required: true, email: true, maxlength: 100 },
-                    status: { required: true }
+                    supplier_kode: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 10
+                    },
+                    supplier_nama: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100
+                    },
+                    supplier_alamat: {
+                        required: true,
+                        maxlength: 255
+                    },
                 },
                 submitHandler: function(form) {
                     $.ajax({
@@ -85,13 +79,13 @@
                         data: $(form).serialize(),
                         success: function(response) {
                             if (response.status) {
-                                $('#modal-master').modal('hide');
+                                $('#myModal').modal('hide');
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Berhasil',
                                     text: response.message
                                 });
-                                dataTable.ajax.reload();
+                                dataSupplier.ajax.reload();
                             } else {
                                 $('.error-text').text('');
                                 $.each(response.msgField, function(prefix, val) {
@@ -103,13 +97,6 @@
                                     text: response.message
                                 });
                             }
-                        },
-                        error: function(xhr) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Terjadi Kesalahan',
-                                text: 'Gagal memperbarui data supplier!'
-                            });
                         }
                     });
                     return false;

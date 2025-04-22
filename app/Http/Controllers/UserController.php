@@ -39,8 +39,9 @@ class UserController extends Controller
     // Ambil data user dalam bentuk JSON untuk DataTables
     public function list(Request $request)
     {
-        $users = UserModel::select('user_id', 'username', 'nama', 'level_id')
-            ->with('level');
+        $users = UserModel::with('level')
+            ->select('user_id', 'username', 'nama', 'level_id');
+
 
         if ($request->level_id) {
             $users->where('level_id', $request->level_id);

@@ -19,7 +19,6 @@
             @if (session('error'))
                 <div class="alert alert-danger">{{ session('error') }}</div>
             @endif
-            
             <table class="table table-bordered table-striped table-hover table-sm" id="table_kategori">
                 <thead>
                     <tr>
@@ -32,24 +31,23 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" databackdrop="static"
-        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
+        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
 @endpush
 @push('js')
-
     <script>
         function modalAction(url = '') {
-            $('#myModal').load(url, function () {
-                $('#myModal').modal('show');
+            $('#myModal').load(url, function() {
+                $(this).modal('show');
             });
         }
 
         var dataKategori;
-        $(document).ready(function () {
+        $(document).ready(function() {
             dataKategori = $('#table_kategori').DataTable({
                 // serverSide: true, jika ingin menggunakan server side processing
                 serverSide: true,
@@ -58,8 +56,7 @@
                     "dataType": "json",
                     "type": "POST",
                 },
-                columns: [
-                    {
+                columns: [{
                         // nomor urut dari laravel datatable addIndexColumn()
                         data: "DT_RowIndex",
                         className: "text-center",
@@ -91,5 +88,4 @@
             });
         });
     </script>
-
 @endpush
