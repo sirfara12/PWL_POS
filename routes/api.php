@@ -9,7 +9,8 @@ use App\Http\Controllers\Api\LevelController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\BarangController;
-
+use App\Http\Controllers\AuthController;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,9 @@ use App\Http\Controllers\Api\BarangController;
 |
 */
 
+Route::post('/register1', [AuthController::class, 'register']);
+Route::post('register1', [RegisterController::class, 'post']);
+//Route::post('/register1', [RegisterController::class, 'post'])->name('register');
 Route::post('/register', [RegisterController::class, 'post'])->name('register');
 Route::post('/login', [LoginController::class, 'post'])->name('login');
 Route::post('/logout', [LogoutController::class, 'post'])->name('logout');
