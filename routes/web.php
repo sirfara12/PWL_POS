@@ -10,6 +10,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StokBarangController;
+use App\Http\Controllers\TransaksiPenjualanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +31,10 @@ Route::get('logout', [AuthController::class, 'logout'])->middleware('auth');
 
 Route::get('/register', [RegisterController::class, 'index']);
 Route::post('/register', [RegisterController::class, 'store']);
-  
+
+
+Route::get('/stok-barang', [StokBarangController::class, 'index'])->name('stok-barang.index');
+Route::get('/transaksi-penjualan', [TransaksiPenjualanController::class, 'index'])->name('transaksi-penjualan.index');
 Route::middleware(['auth'])->group(function () {
 
 Route::get('/', [WelcomeController::class, 'index']);

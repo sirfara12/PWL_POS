@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\KategoriController;
 use App\Http\Controllers\Api\BarangController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\TransaksiController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -55,6 +56,10 @@ Route::put('/barang/{id}', [BarangController::class, 'update']);
 Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 
 Route::delete('levels/{level}', [LevelController::class, 'destroy']);
+
+Route::get('/transaksi', [TransaksiController::class, 'index']);
+Route::post('/transaksi', [TransaksiController::class, 'store']);
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
